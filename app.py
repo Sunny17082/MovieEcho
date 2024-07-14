@@ -8,6 +8,11 @@ def fetch_poster(movie):
     data = response.json()
     return data['Poster']
 
+def fetch_info(movie):
+    response = requests.get('https://www.omdbapi.com/?t={}&apikey=81d01e65'.format(movie))
+    data = response.json()
+    return data
+
 def recommend(movie):
     movie_index = movies[movies["title"] == movie].index[0]
     distances = similarity[movie_index]
@@ -25,6 +30,8 @@ movies = pd.DataFrame(movies_list)
 
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 
+
+
 st.title("MovieEcho")
 
 selected_movie_name = st.selectbox(
@@ -34,6 +41,27 @@ selected_movie_name = st.selectbox(
 
 if st.button('Recommend'):
     names, posters = recommend(selected_movie_name)
+
+    data = fetch_info(selected_movie_name)
+
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        st.subheader(data['Title'])
+        st.image(data['Poster'])
+
+    with right_column:
+        st.subheader('Plot')
+        st.write(data['Plot'])
+        st.text('Runtime: ' + data['Runtime'])
+        st.text('Genre: ' + data['Genre'])
+        st.text('Top Actors: ')
+        for i in data['Actors'].split(','):
+            st.text(i)
+        st.text('Director: ' + data['Director'])
+        for i in data['Ratings']:
+            if i['Source'] == 'Rotten Tomatoes':
+                st.text('Rotten Tomatoes Rating: ' + i['Value'])
 
     st.title('Similar to ' + selected_movie_name)
 
