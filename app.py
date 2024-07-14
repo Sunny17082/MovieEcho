@@ -25,15 +25,17 @@ movies = pd.DataFrame(movies_list)
 
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 
-st.title("Movie Recommender System")
+st.title("MovieEcho")
 
 selected_movie_name = st.selectbox(
     'Get movie recommendation',
     movies['title'].values
 )
 
-if st.button("Recommend"):
+if st.button('Recommend'):
     names, posters = recommend(selected_movie_name)
+
+    st.title('Similar to ' + selected_movie_name)
 
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
