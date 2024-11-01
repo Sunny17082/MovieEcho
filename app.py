@@ -6,6 +6,8 @@ import requests
 def fetch_poster(movie):
     response = requests.get('https://www.omdbapi.com/?t={}&apikey=81d01e65'.format(movie))
     data = response.json()
+    if data["Poster"] == 'N/A':
+        return 'https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg'
     return data['Poster']
 
 def fetch_info(movie):
@@ -48,7 +50,10 @@ if st.button('Recommend'):
 
     with left_column:
         st.subheader(data['Title'])
-        st.image(data['Poster'])
+        if data['Poster'] == 'N/A':
+            st.image('https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg')
+        else:
+            st.image(data['Poster'])
 
     with right_column:
         st.subheader('Plot')
